@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Portal</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
+    table { width: 100%; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Student Portal</h2>
+
+  <form id="studentForm">
+    <input type="hidden" id="studentId">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="number" id="course_id" placeholder="Course ID" required>
+    <button type="submit">Save Student</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Email</th><th>Course ID</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="studentsTable"></tbody>
+  </table>
+
+  <script>
+    const API = 'http://localhost:3000/students';
+    const form = document.getElementById('studentForm');
+    const table = document.getElementById('studentsTable');
+
+    // Load students on page load
+    window.onload = loadStudents;
+
+    function loadStudents() {
+      fetch(API)
+        .then(res => res.json())
+        .then(data => {
+          table.innerHTML = '';
+          data.forEach(s => {
+            table.innerHTML += `
+              <tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td>${s.course_id}</td>
+                <td>
+                  <button onclick="editStudent(${s.id}, '${s.name}', '${s.email}', ${s.course_id})">Edit</button>
+                  <button onclick="deleteStudent(${s.id})">Delete</button>
+                </td>
+              </tr>`;
+          });
+        });
+    }
+
+    form.onsubmit = e => {
+      e.preventDefault();
+      const id = document.getElementById('studentId').value;
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const course_id = document.getElementById('course_id').value;
+
+      const student = { name, email, course_id };
+
+      if (id) {
+        fetch(`${API}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(student)
+        }).then(() => {
+          form.reset();
+          loadStudents();
+        });
+      } else {
+        fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(student)
+        }).then(() => {
+          form.reset();
+          loadStudents();
+        });
+      }
+    };
+
+    function editStudent(id, name, email, course_id) {
+      document.getElementById('studentId').value = id;
+      document.getElementById('name').value = name;
+      document.getElementById('email').value = email;
+      document.getElementById('course_id').value = course_id;
+    }
+
+    function deleteStudent(id) {
+      if (confirm('Are you sure you want to delete this student?')) {
+        fetch(`${API}/${id}`, { method: 'DELETE' }).then(loadStudents);
+      }
+    }
+  </script>
+</body>
+</html>
