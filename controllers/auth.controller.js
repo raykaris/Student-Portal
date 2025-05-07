@@ -36,7 +36,7 @@ export async function loginEmployee(req, res) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login successful', redirect: '/index.html' });
+    res.json({ message: 'Login successful', redirect: '/portal.html' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

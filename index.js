@@ -27,21 +27,21 @@ app.use(cors());
 app.use(express.json());
 
 // Api routes
-app.use('/',authRouter);
-app.use('/',studentRouter);
+app.use('/auth',authRouter);
+app.use('/students',studentRouter);
 app.use('/courses',courseRouter);
 app.use('/instructors',instructorRouter);
 
 
 
 // Serve auth.html by default
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/auth.html'));
+app.get('/auth', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Redirect /portal to auth.html
-app.get('/', (req, res) => {
-  res.redirect('/portal');
+// Redirect /students to auth.html
+app.get('/students', (req, res) => {
+  res.redirect('/auth');
 });
 
 // Connect to Database first then start server

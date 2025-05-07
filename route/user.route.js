@@ -10,7 +10,7 @@ import auth from '../middleware/auth.js';
 
 const studentRouter = express.Router();
 
-studentRouter.get('/',auth,getAllStudents);
+studentRouter.get('/',getAllStudents);
 studentRouter.get('/:id',getStudentById);
 studentRouter.post('/',createStudent);
 studentRouter.put('/:id',updateStudent);
